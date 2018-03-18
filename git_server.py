@@ -71,9 +71,12 @@ class GitHubApi(GitServerApi):
             print('The "{}" repository was deleted successfully.'.format(name))
 
     def list_repositories(self):
+
         _api_end_point = '/user/repos'
-        r = requests.get(self.git_url + _api_end_point,
-                         auth=(self.git_user, self.git_pass))
+
+        with requests.Session() as s:
+            s.auth = (self.git_user, self.git_pass)
+            r = s.get(self.git_url + _api_end_point)
 
         for repository in r.json():
             print(repository['name'])
@@ -93,10 +96,10 @@ def main(argv):
 
     pk_git = GitHubApi(os.environ['GITHUB_USER'], os.environ['GITHUB_PASS'])
 
-    pk_git.create_repository('requests_playground')
+    # pk_git.create_repository('requests_playground')
     # pk_git.delete_repository('')
-    # pk_git.list_repositories()
-    pk_git.user_info()
+    pk_git.list_repositories()
+    # pk_git.user_info()
 
 
 if __name__ == "__main__":
